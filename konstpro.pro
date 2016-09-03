@@ -9,11 +9,23 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
+#copy xhtml-files to build directory
+copyfiles.commands += @echo COPY FROM $${PWD} TO $${OUT_PWD} &
+copyfiles.commands += cp -r $${PWD}/briefCv.xhtml $${OUT_PWD}/ &
+copyfiles.commands += cp -r $${PWD}/homePage.xhtml $${OUT_PWD}/ &
+copyfiles.commands += cp -r $${PWD}/header.xhtml $${OUT_PWD}/ &
+#copyfiles.commands += cp -r $${PWD}/$${DISTFILES} $${OUT_PWD}/$${DISTFILES} &
+copyfiles.commands += echo Finished deployment
+
+QMAKE_EXTRA_TARGETS += copyfiles
+POST_TARGETDEPS += copyfiles
+
 SOURCES += main.cpp \
     site.cpp \
     homepage.cpp \
     content.cpp \
-    cvpage.cpp
+    cvpage.cpp \
+    loadproc.cpp
 
 QMAKE_CXXFLAGS += -g
 QMAKE_CXXFLAGS += -std=c++0x
@@ -30,5 +42,8 @@ HEADERS += \
     cvpage.h
 
 DISTFILES += \
-    homePage.html \
-    briefCv.xhtml
+    briefCv.xhtml \
+    homePage.xhtml \
+    header.xhtml
+
+

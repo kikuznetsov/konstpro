@@ -2,6 +2,7 @@
 #include "content.h"
 #include "homepage.h"
 #include "cvpage.h"
+#include "loadproc.h"
 
 using namespace Wt;
 
@@ -42,7 +43,7 @@ Site::Site(const WEnvironment& env)
     leftMenuNav->addItem("Home", new HomePage());
     leftMenuNav->addItem("CV", new CvPage());
     leftMenuNav->addItem("Publications", new Wt::WText("dfsf!"));
-    leftMenuNav->addItem("Blog", new Wt::WText("sfsdfsss!"));
+    leftMenuNav->addItem("Blog", new LoadProc());
     leftMenuNav->addItem("Contacts", new Wt::WText("sfsdfsss!"));
 
     bodyContainer->addWidget(contentsStackBody);

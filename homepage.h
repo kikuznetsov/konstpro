@@ -6,6 +6,7 @@
 #include <Wt/WText>
 #include <Wt/WImage>
 #include "content.h"
+#include "loadproc.h"
 
 using namespace Wt;
 
@@ -16,9 +17,10 @@ public:
 
 private:
 
-    WImage* ava;
-    WText* shortText;
-    Content* cnt;
+    WImage* ava_;
+    Content* header_;
+    Content* cnt_;
+    LoadProc* loadCPU_;
 
 
 };

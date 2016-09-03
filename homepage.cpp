@@ -4,18 +4,23 @@
 
 HomePage::HomePage(WContainerWidget *parent):WContainerWidget(parent){
 
-    shortText = new WText("<h3>Breifly abreifly abreifly abreifly abreifly abreifly abreifly abreifly abreifly about me...</h3>");
-    cnt  = new Content("homePage.html",parent);
-    ava = new WImage(WLink("konst.png"));
-    ava->setMaximumSize(200,200);
+    header_ = new Content("header.xhtml",parent);
+
+    cnt_  = new Content("homePage.xhtml",parent);
+
+    ava_ = new WImage(WLink("konst.png"));
+    ava_->setMaximumSize(200,200);
+
+    loadCPU_ = new LoadProc();
 
     //разметка
     WVBoxLayout* vBox = new Wt::WVBoxLayout();
     WHBoxLayout* hBox = new WHBoxLayout();
     vBox->addLayout(hBox);
-        hBox->addWidget(ava);
-        hBox->addWidget(shortText);
-    vBox->addWidget(cnt);
+        hBox->addWidget(ava_);
+        hBox->addWidget(header_);
+    vBox->addWidget(cnt_);
+    vBox->addWidget(loadCPU_);
 
     this->setLayout(vBox);
 }
