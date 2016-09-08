@@ -3,6 +3,7 @@
 
 #include <Wt/WContainerWidget>
 #include <Wt/WPushButton>
+#include <Wt/WImage>
 #include "content.h"
 
 class CvPage: public Wt::WContainerWidget{
@@ -13,8 +14,9 @@ public:
 
 private:
 
-    Wt::WPushButton* downloadCv;
-    Content* briefCv;
+    Wt::WImage* ava_;
+    Wt::WPushButton* downloadCv_;
+    Content* briefCv_;
 
 };
 #endif // CVPAGE_H

@@ -1,19 +1,43 @@
 #include "cvpage.h"
 #include <Wt/WHBoxLayout>
+#include <Wt/WVBoxLayout>
+#include <Wt/WGroupBox>
 
 CvPage::CvPage(WContainerWidget *parent):WContainerWidget(parent){
 
-    downloadCv = new WPushButton("Download full CV in pdf");
-    downloadCv->setMinimumSize(200,35);
-    downloadCv->setMaximumSize(200,35);
-    downloadCv->setStyleClass("btn-primary");
-    downloadCv->setLink(Wt::WLink("/pdf.pdf"));
+    downloadCv_ = new WPushButton("Download full CV");
+    //downloadCv_->setMinimumSize(100,35);
+    //downloadCv_->setMaximumSize(200,35);
+    downloadCv_->setStyleClass("btn-primary");
+    downloadCv_->setLink(Wt::WLink("/pdf.pdf"));
 
-    briefCv  = new Content("briefCv.xhtml",parent);
+    briefCv_  = new Content("briefCv.xhtml",parent);
+    briefCv_ -> setMinimumSize(100,300);
+
+    ava_ = new WImage(WLink("images/konst.png"));
+    //ava_->setMaximumSize(200,200);
+    //ava_->setMinimumSize(100,100);
 
     WHBoxLayout* hBox = new WHBoxLayout();
-    hBox->addWidget(downloadCv);
-    hBox->addWidget(briefCv);
+    WGroupBox* grBox = new WGroupBox();
+    grBox->setMaximumSize(350,350);
+    grBox->setMinimumSize(200,250);
+    WVBoxLayout* vBox = new WVBoxLayout();
+        vBox->addWidget(ava_);
+        vBox->addWidget(downloadCv_);
+        vBox->addWidget(new WText("e-mail:kost.kuznetsov@gmail.com"));
+    //vBox->setResizable(0,false,35);
+    //vBox->setResizable(1,false,200);
+
+    grBox->setLayout(vBox);
+    //grBox->setWidth(200);
+    //grBox->setHeight(250);
+    hBox->setContentsMargins(10,10,10,10);
+
+
+    hBox->addWidget(grBox);
+    hBox->addWidget(briefCv_);
+
 
     this->setLayout(hBox);
 

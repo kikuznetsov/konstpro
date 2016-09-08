@@ -8,8 +8,11 @@ HomePage::HomePage(WContainerWidget *parent):WContainerWidget(parent){
 
     cnt_  = new Content("homePage.xhtml",parent);
 
-    ava_ = new WImage(WLink("konst.png"));
-    ava_->setMaximumSize(200,200);
+    ava_ = new WImage(WLink("images/ava.png"));
+    ava_->setMaximumSize(300,300);
+    ava_->setMinimumSize(100,100);
+
+
 
     loadCPU_ = new LoadProc();
 
