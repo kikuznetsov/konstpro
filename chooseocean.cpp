@@ -17,7 +17,7 @@ void ChooseOcean::createUI(){
     elementAt(row, 0)->setColumnSpan(3);
     elementAt(row, 0)->setContentAlignment(AlignTop | AlignCenter);
     elementAt(row, 0)->setPadding(10);
-    WText *title = new WText("list of results", elementAt(row, 0));
+    //WText *title = new WText("list of results", elementAt(row, 0));
 
     // Type of data
     ++row;
