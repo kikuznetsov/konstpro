@@ -4,6 +4,7 @@
 #include "cvpage.h"
 #include "loadproc.h"
 #include "chooseocean.h"
+#include "oceandata.h"
 
 using namespace Wt;
 
@@ -39,12 +40,10 @@ Site::Site(const WEnvironment& env)
     leftMenuNav = new Wt::WMenu(contentsStackBody, bodyContainer);
     navigation->addMenu(leftMenuNav);
 
-    //HomePage* hPage = new HomePage(bodyContainer);
-
-    leftMenuNav->addItem("Home", new HomePage());
-    leftMenuNav->addItem("CV", new CvPage());
+    leftMenuNav->addItem("Home", new HomePage(bodyContainer));
+    leftMenuNav->addItem("CV", new CvPage(bodyContainer));
     leftMenuNav->addItem("Publications", new Wt::WText("Under construction.."));
-    leftMenuNav->addItem("Ocean data", new LoadProc());
+    leftMenuNav->addItem("Ocean data", new OceanData(bodyContainer));
     leftMenuNav->addItem("Contacts", new Content("header.xhtml"));
 
     bodyContainer->addWidget(contentsStackBody);

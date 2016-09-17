@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     content.cpp \
     cvpage.cpp \
     loadproc.cpp \
-    chooseocean.cpp
+    chooseocean.cpp \
+    oceandata.cpp
 
 QMAKE_CXXFLAGS += -g
 QMAKE_CXXFLAGS += -std=c++0x
@@ -41,7 +42,8 @@ HEADERS += \
     content.h \
     loadproc.h \
     cvpage.h \
-    chooseocean.h
+    chooseocean.h \
+    oceandata.h
 
 DISTFILES += \
     briefCv.xhtml \
