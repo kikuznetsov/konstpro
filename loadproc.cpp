@@ -58,11 +58,13 @@ LoadProc::LoadProc(WContainerWidget* parent):WContainerWidget(parent){
      */
     for (int i = 2; i < 3; ++i) {
         Wt::Chart::WDataSeries *s = new Wt::Chart::WDataSeries(i, Wt::Chart::CurveSeries);
+        s->setFillRange(Wt::Chart::FillRangeType::MinimumValueFill);
         //s->setShadow(Wt::WShadow(3, 3, Wt::WColor(0, 0, 0, 127), 3));
         chart_->addSeries(s);
     }
 
     chart_->resize(350, 200);
+    chart_->setTitle("CPU Load, %");
     chart_->setMargin(Wt::WLength::Auto, Wt::Left | Wt::Right);
 
 }

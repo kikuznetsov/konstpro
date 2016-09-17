@@ -16,7 +16,7 @@ CvPage::CvPage(WContainerWidget *parent):WContainerWidget(parent){
 
     ava_ = new WImage(WLink("images/konst.png"));
     //ava_->setMaximumSize(200,200);
-    //ava_->setMinimumSize(100,100);
+    ava_->setMinimumSize(200,200);
 
     WHBoxLayout* hBox = new WHBoxLayout();
     WGroupBox* grBox = new WGroupBox();

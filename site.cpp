@@ -3,6 +3,7 @@
 #include "homepage.h"
 #include "cvpage.h"
 #include "loadproc.h"
+#include "chooseocean.h"
 
 using namespace Wt;
 
@@ -42,9 +43,9 @@ Site::Site(const WEnvironment& env)
 
     leftMenuNav->addItem("Home", new HomePage());
     leftMenuNav->addItem("CV", new CvPage());
-    leftMenuNav->addItem("Publications", new Wt::WText("dfsf!"));
-    leftMenuNav->addItem("Blog", new LoadProc());
-    leftMenuNav->addItem("Contacts", new Wt::WText("sfsdfsss!"));
+    leftMenuNav->addItem("Publications", new Wt::WText("Under construction.."));
+    leftMenuNav->addItem("Ocean data", new LoadProc());
+    leftMenuNav->addItem("Contacts", new Content("header.xhtml"));
 
     bodyContainer->addWidget(contentsStackBody);
 
