@@ -9,7 +9,7 @@ CvPage::CvPage(WContainerWidget *parent):WContainerWidget(parent){
     //downloadCv_->setMinimumSize(100,35);
     //downloadCv_->setMaximumSize(200,35);
     downloadCv_->setStyleClass("btn-primary");
-    downloadCv_->setLink(Wt::WLink("/pdf.pdf"));
+    downloadCv_->setLink(Wt::WLink("pdfs/kkuznetsov_cv_faculty.pdf"));
 
     briefCv_  = new Content("briefCv.xhtml",parent);
     briefCv_ -> setMinimumSize(100,300);

@@ -21,7 +21,7 @@ OceanData::OceanData(WContainerWidget *parent):WContainerWidget(parent){
     menu_->addItem("Export data", textChoose_);
 
 
-    WText* title = new WText("<h2>In-situ wave measurements from Sakhakin</h2>");
+    WText* title = new WText("<h3>In-situ wave measurements from Sakhakin</h3>");
 
     WVBoxLayout* vBox = new WVBoxLayout();
     vBox->addWidget(title);
