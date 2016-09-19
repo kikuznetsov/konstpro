@@ -10,15 +10,15 @@ OceanData::OceanData(WContainerWidget *parent):WContainerWidget(parent){
 
     menu_ = new Wt::WMenu(contentsMenu, Wt::Vertical,parent);
     menu_->setStyleClass("nav nav-pills nav-stacked");
-    menu_->setWidth(150);
+    menu_->setWidth(100);
 
 
     // Add menu items using the default lazy loading policy.
     textOverview_ = new WText("Here will be a map with overview of experiments ..............................................");
-    textChoose_ = new WText("tool for export data from DB ...................................................");
+    chooseOcean_ = new ChooseOcean();
 
+    menu_->addItem("Export data", chooseOcean_);
     menu_->addItem("Overview data", textOverview_);
-    menu_->addItem("Export data", textChoose_);
 
 
     WText* title = new WText("<h3>In-situ wave measurements from Sakhakin</h3>");

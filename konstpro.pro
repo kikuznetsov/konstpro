@@ -43,7 +43,8 @@ HEADERS += \
     loadproc.h \
     cvpage.h \
     chooseocean.h \
-    oceandata.h
+    oceandata.h \
+    structdb.h
 
 DISTFILES += \
     briefCv.xhtml \
