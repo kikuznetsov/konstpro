@@ -71,7 +71,7 @@ void ChooseOcean::createUI(){
     label = new WLabel("<b>From time</b>", elementAt(row, 0));
     ++row;
     sldFromTime_ = new WSlider();
-    sldFromTime_->changed().connect(this, &ChooseOcean::sldChanged);
+    sldFromTime_->valueChanged().connect(this, &ChooseOcean::sldFromChanged);
 
 
     //set up view of "from time"
@@ -79,11 +79,11 @@ void ChooseOcean::createUI(){
     sldFromTime_->setToolTip("Move slider to specify START time of records");
     sldFromTime_->setWidth(200);
     WHBoxLayout* hBoxFromTime = new WHBoxLayout();
-    WText* d= new WText("01.01.1987");
-    WText* d1= new WText("01.01.1987");
-    hBoxFromTime->addWidget(d);
+    lblFromBegTime_ = new WText("01.01.1987");
+    lblFromEndTime_ = new WText("01.01.1987");
+    hBoxFromTime->addWidget(lblFromBegTime_);
     hBoxFromTime->addWidget(sldFromTime_);
-    hBoxFromTime->addWidget(d1);
+    hBoxFromTime->addWidget(lblFromEndTime_);
     elementAt(row,1)->setLayout(hBoxFromTime);
 
     // To Time
@@ -92,18 +92,18 @@ void ChooseOcean::createUI(){
     label = new WLabel("<b>To time</b>", elementAt(row, 0));
     ++row;
     sldToTime_ = new WSlider();
-    sldToTime_->changed().connect(this, &ChooseOcean::sldChanged);
+    sldToTime_->valueChanged().connect(this, &ChooseOcean::sldToChanged);
 
     //set up view of "to time"
     sldToTime_->setWidth(200);
     sldToTime_->setValue(100);
     sldToTime_->setToolTip("Move slider to specify FINISH time of records");
     WHBoxLayout* hBoxToTime = new WHBoxLayout();
-    d= new WText("01.01.1987");
-    d1= new WText("01.01.1987");
-    hBoxToTime->addWidget(d);
+    lblToBegTime_= new WText("01.01.1987");
+    lblToEndTime_= new WText("01.01.1987");
+    hBoxToTime->addWidget(lblToBegTime_);
     hBoxToTime->addWidget(sldToTime_);
-    hBoxToTime->addWidget(d1);
+    hBoxToTime->addWidget(lblToEndTime_);
     elementAt(row,1)->setLayout(hBoxToTime);
 
 
@@ -170,18 +170,69 @@ void ChooseOcean::bxPlace2Changed(){
     //elementAt(bxPlace.size()+1,1)->setDisabled(false);
     {
         dbo::Transaction transaction(session);
-        //exps_.
-        //PtrPlaces places2 = session.find<Place>().where("fullname = ?").bind("IZM");
-        PtrExps exps1 = session.find<Passport>();//.where("place_id = ?").bind(bxPlace[0]->currentText());
-        if(exps_.empty())
-            exps_ = exps1;
-        //tr.commit();
+        PtrExps exps1;
+        if(bxPlace[0]->currentText()=="All"){
+            exps1 = session.find<Passport>();
+        }
+        else{
+            if(bxPlace[1]->currentText()!=" "){
+                exps1 = session.find<Passport>().where("place_id = ? or place_id = ?")
+                                                    .bind(bxPlace[0]->currentText())
+                                                    .bind(bxPlace[1]->currentText());
+            }
+            else{
+                exps1 = session.find<Passport>().where("place_id = ?")
+                                                    .bind(bxPlace[0]->currentText());
+            }
+        }
+//        if(exps_.empty())
+//            exps_ = exps1;
+
+        //calculate start and finish time
+        int count = 0;
+        for(PtrExps::const_iterator i = exps1.begin();i!=exps1.end();i++){
+            if(count==0){
+                begTimeSample_ = (*i)->begTime;
+                endTimeSample_ = (*i)->endTime;
+            }
+            count++;
+            if((*i)->begTime<=begTimeSample_)
+                   begTimeSample_ = (*i)->begTime;
+            if((*i)->endTime>=endTimeSample_)
+                   endTimeSample_ = (*i)->endTime;
+        }
+
+        txtFromTime_->setText(begTimeSample_.toString("dd.MM.yyyy hh:mm:ss"));
+        txtToTime_  ->setText(endTimeSample_.toString("dd.MM.yyyy hh:mm:ss"));
+
+        lblFromBegTime_ ->setText(begTimeSample_.toString("dd.MM.yyyy"));
+        lblFromEndTime_ ->setText(endTimeSample_.toString("dd.MM.yyyy"));
+        lblToBegTime_   ->setText(begTimeSample_.toString("dd.MM.yyyy"));
+        lblToEndTime_   ->setText(endTimeSample_.toString("dd.MM.yyyy"));
+
+        begTimeUser_ = begTimeSample_;
+        endTimeUser_ = endTimeSample_;
+        transaction.commit();
     }
-    std::cout<<"sddsf"<<std::endl;
 }
 void ChooseOcean::typeDataChanged(){
 
 }
-void ChooseOcean::sldChanged(){
-
+void ChooseOcean::sldFromChanged(){
+    std::time_t delta = endTimeUser_.toTime_t() - begTimeSample_.toTime_t();
+    delta = delta*sldFromTime_->value()/100;
+    WDateTime curr;
+    curr.setTime_t(begTimeSample_.toTime_t()+delta);
+    begTimeUser_ = curr;
+    txtFromTime_ ->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
+    lblToBegTime_->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
+}
+void ChooseOcean::sldToChanged(){
+    std::time_t delta = endTimeSample_.toTime_t() - begTimeUser_.toTime_t();
+    delta = delta*sldToTime_->value()/100;
+    WDateTime curr;
+    curr.setTime_t(begTimeUser_.toTime_t()+delta);
+    endTimeUser_ = curr;
+    txtToTime_ ->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
+    lblFromEndTime_->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
 }

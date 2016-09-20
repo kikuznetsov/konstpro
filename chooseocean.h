@@ -42,6 +42,20 @@ private:
     PtrExps exps_;     //posible to assign only ONE time (DBO-library fault)
                        //need to change to std::vector, and save all history of querys is this vector
 
+    WDateTime begTimeSample_; //time which comes from database
+    WDateTime endTimeSample_;
+
+    WDateTime begTimeUser_; //time whitch was defined by user
+    WDateTime endTimeUser_;
+
+    WText* lblFromBegTime_;
+    WText* lblFromEndTime_;
+
+    WText* lblToBegTime_;
+    WText* lblToEndTime_;
+
+
+
     WTable* listResults_;
 //    std::vector<WComboBox*> lstComboboxRes_;
 //    std::vector<string> lstNumGauges_;
@@ -57,7 +71,8 @@ private:
     void bxPlace1Changed();
     void bxPlace2Changed();
 
-    void sldChanged();
+    void sldFromChanged();
+    void sldToChanged();
 
 };
 
