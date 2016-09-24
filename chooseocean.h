@@ -1,6 +1,8 @@
 #ifndef CHOOSEOCEAN_H
 #define CHOOSEOCEAN_H
 
+#include <Wt/WContainerWidget>
+#include <Wt/WStackedWidget>
 #include <Wt/WTable>
 #include <Wt/WSlider>
 #include <Wt/WText>
@@ -15,18 +17,20 @@ using namespace Wt;
 typedef dbo::collection<dbo::ptr<Passport>> PtrExps;
 typedef dbo::collection<dbo::ptr<Place>>    PtrPlaces;
 
-class ChooseOcean:public WTable{
+class ChooseOcean:public WContainerWidget{
 public:
 
     ChooseOcean(WContainerWidget* parent=0);
 
 private:
 
-    //WComboBox* bxTypeData_;
+    //connection to database
+    dbo::backend::Sqlite3 sqlCon_;
+    dbo::Session session;
 
-    WComboBox* bxPlace1_;
-    WComboBox* bxPlace2_;
-    WComboBox* bxPlace3_;
+
+    //UI: form for specify PlaceId ans Time
+    WTable* uiPlaceTime;
     std::vector<WComboBox*> bxPlace;
 
     WText* txtFromTime_;
@@ -35,37 +39,38 @@ private:
     WSlider* sldFromTime_;
     WSlider* sldToTime_;
 
-    dbo::backend::Sqlite3 sqlCon_;
-    dbo::Session session;
-
-    PtrPlaces places_; //posible to assign only ONE time (DBO-library fault)
-    PtrExps exps_;     //posible to assign only ONE time (DBO-library fault)
-                       //need to change to std::vector, and save all history of querys is this vector
-
-    WDateTime begTimeSample_; //time which comes from database
-    WDateTime endTimeSample_;
-
-    WDateTime begTimeUser_; //time whitch was defined by user
-    WDateTime endTimeUser_;
-
     WText* lblFromBegTime_;
     WText* lblFromEndTime_;
 
     WText* lblToBegTime_;
     WText* lblToEndTime_;
 
-
-
+    //UI: form for specify expId
     WTable* listResults_;
-//    std::vector<WComboBox*> lstComboboxRes_;
-//    std::vector<string> lstNumGauges_;
-//    std::vector<string> lstPlaces_;
-//    std::vector<string> lstFromTime_;
-//    std::vector<string> lstToTime_;
+    std::vector<WComboBox*> lstComboboxRes_;
+    std::vector<WString>    lstNumGauges_;
+    std::vector<WString>    lstPlaces_;
+    std::vector<WString>    lstFromTime_;
+    std::vector<WString>    lstToTime_;
+    std::vector<double>     lstDepth_;
+    std::vector<int>        lstFilt_;
 
-//    WPushButton* btnGetData_;
+    //WPushButton* btnGetData_;
 
-    void createUI();
+    WDateTime begTimeSample_; //time which comes from database
+    WDateTime endTimeSample_;
+
+    //result of user actions
+    WString place1IdUser_;
+    WString place2IdUser_;
+    WDateTime begTimeUser_; //time whitch was defined by user
+    WDateTime endTimeUser_;
+    //std::vector<Passport> passportUser_;
+    //results.............
+
+
+
+    void createUI(WContainerWidget* parent);
 
     void typeDataChanged();
     void bxPlace1Changed();
@@ -73,6 +78,9 @@ private:
 
     void sldFromChanged();
     void sldToChanged();
+
+    void createResults();
+    void setUserTime();
 
 };
 

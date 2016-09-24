@@ -3,11 +3,12 @@
 #include <Wt/WLabel>
 #include <Wt/WPushButton>
 #include <Wt/WHBoxLayout>
-#include <istream>
-
+#include <Wt/WCheckBox>
+#include <iostream>
+#include <sstream>
 
 ChooseOcean::ChooseOcean(WContainerWidget *parent)
-  : WTable(parent),
+  : WContainerWidget(parent),
     sqlCon_("test.db") //create connection
 {
     //set up connection
@@ -18,48 +19,35 @@ ChooseOcean::ChooseOcean(WContainerWidget *parent)
     session.mapClass<Passport>("passport");
     session.mapClass<Rec>("exp");
     session.mapClass<Place>("place");
-    createUI();
+    createUI(parent);
 
+    listResults_=new WTable(parent);
+    listResults_->addStyleClass("table-bordered");
+    listResults_->addStyleClass("table-condensed");
+    listResults_->addStyleClass("table-striped");
+    listResults_->addStyleClass("table-hover");
+    parent->setContentAlignment(AlignLeft);
 
 }
-void ChooseOcean::createUI(){
+void ChooseOcean::createUI(WContainerWidget* parent){
+    uiPlaceTime = new WTable(parent);
     WLabel *label;
     int row = 0;
 
-
-
-    // Title
-//    elementAt(row, 0)->setColumnSpan(3);
-//    elementAt(row, 0)->setContentAlignment(AlignTop | AlignCenter);
-//    elementAt(row, 0)->setPadding(10);
-    //WText *title = new WText("list of results", elementAt(row, 0));
-
-    // Type of data
-    //++row;
-//    bxTypeData_ = new WComboBox(elementAt(row, 1));
-//    bxTypeData_->addItem("Init press");
-//    bxTypeData_->addItem("Filtered press");
-//    bxTypeData_->addItem("Temperature");
-//    bxTypeData_->addItem("Meteo");
-//    label = new WLabel("Type of data", elementAt(row, 0));
-//    label->setBuddy(bxTypeData_);
-//    bxTypeData_->setValidator(new WValidator(true));
-//    bxTypeData_->changed().connect(this, &ChooseOcean::typeDataChanged);
-
-//    // Place
-    bxPlace.push_back(new WComboBox(elementAt(row, 1)));
+//  Place
+    bxPlace.push_back(new WComboBox(uiPlaceTime->elementAt(row, 1)));
     bxPlace[0]->addItem("All");
 
     {
         dbo::Transaction transaction(session);
-        places_=session.find<Place>();
-        for(PtrPlaces::const_iterator i = places_.begin();i!=places_.end();i++){
+        PtrPlaces places=session.find<Place>();
+        for(PtrPlaces::const_iterator i = places.begin();i!=places.end();i++){
             bxPlace[0]->addItem((*i)->fullName);
         }
         transaction.commit();
     }
 
-    label = new WLabel("Places", elementAt(row,0));
+    label = new WLabel("Places", uiPlaceTime->elementAt(row,0));
     label->setBuddy(bxPlace[0]);
     bxPlace[0]->setMargin(5);
     bxPlace[0]->setValidator(new WValidator(true));
@@ -67,8 +55,9 @@ void ChooseOcean::createUI(){
 
     // From Time
     ++row;
-    txtFromTime_ = new WText("01.01.1987 00:00:00", elementAt(row, 1));
-    label = new WLabel("<b>From time</b>", elementAt(row, 0));
+    txtFromTime_ = new WText("01.01.1987 00:00:00", uiPlaceTime->elementAt(row, 1));
+    uiPlaceTime->elementAt(row, 1)->setToolTip("Move slider to specify START time of records");
+    label = new WLabel("<b>From time</b>", uiPlaceTime->elementAt(row, 0));
     ++row;
     sldFromTime_ = new WSlider();
     sldFromTime_->valueChanged().connect(this, &ChooseOcean::sldFromChanged);
@@ -76,7 +65,7 @@ void ChooseOcean::createUI(){
 
     //set up view of "from time"
     //sldFromTime_->setEnabled(false);
-    sldFromTime_->setToolTip("Move slider to specify START time of records");
+    uiPlaceTime->elementAt(row, 1)->setToolTip("Move slider to specify START time of records");
     sldFromTime_->setWidth(200);
     WHBoxLayout* hBoxFromTime = new WHBoxLayout();
     lblFromBegTime_ = new WText("01.01.1987");
@@ -84,60 +73,55 @@ void ChooseOcean::createUI(){
     hBoxFromTime->addWidget(lblFromBegTime_);
     hBoxFromTime->addWidget(sldFromTime_);
     hBoxFromTime->addWidget(lblFromEndTime_);
-    elementAt(row,1)->setLayout(hBoxFromTime);
+    uiPlaceTime->elementAt(row,1)->setLayout(hBoxFromTime);
 
     // To Time
     ++row;
-    txtToTime_ = new WText("01/01/1987 00:00:00", elementAt(row, 1));
-    label = new WLabel("<b>To time</b>", elementAt(row, 0));
+    txtToTime_ = new WText("01/01/1987 00:00:00", uiPlaceTime->elementAt(row, 1));
+    uiPlaceTime->elementAt(row, 1)->setToolTip("Move slider to specify FINISH time of records");
+    label = new WLabel("<b>To time</b>", uiPlaceTime->elementAt(row, 0));
     ++row;
     sldToTime_ = new WSlider();
     sldToTime_->valueChanged().connect(this, &ChooseOcean::sldToChanged);
 
     //set up view of "to time"
+    uiPlaceTime->elementAt(row, 1)->setToolTip("Move slider to specify FINISH time of records");
     sldToTime_->setWidth(200);
     sldToTime_->setValue(100);
-    sldToTime_->setToolTip("Move slider to specify FINISH time of records");
     WHBoxLayout* hBoxToTime = new WHBoxLayout();
     lblToBegTime_= new WText("01.01.1987");
     lblToEndTime_= new WText("01.01.1987");
     hBoxToTime->addWidget(lblToBegTime_);
     hBoxToTime->addWidget(sldToTime_);
     hBoxToTime->addWidget(lblToEndTime_);
-    elementAt(row,1)->setLayout(hBoxToTime);
+    uiPlaceTime->elementAt(row,1)->setLayout(hBoxToTime);
 
 
     //Result
     ++row;
-    listResults_ = new WTable(elementAt(row,0));
+    listResults_ = new WTable(uiPlaceTime->elementAt(row,0));
 
-    // Submit
-    ++row;
-    WPushButton *submit = new WPushButton("Export",
-                      elementAt(row, 0));
-    //submit->clicked().connect(this, &Form::submit);
-    submit->setMargin(15, Top);
+//    // Submit
+//    ++row;
+//    WPushButton *submit = new WPushButton("Export", uiPlaceTime->elementAt(row, 0));
+//    //submit->clicked().connect(this, &Form::submit);
+//    submit->setMargin(15, Top);
 
     // Set column widths for label and validation icon
-    elementAt(2, 0)->resize(WLength(30, WLength::FontEx), WLength::Auto);
-    elementAt(2, 1)->resize(10, WLength::Auto);
+    uiPlaceTime->elementAt(2, 0)->resize(WLength(30, WLength::FontEx), WLength::Auto);
+    uiPlaceTime->elementAt(2, 1)->resize(10, WLength::Auto);
 
     //set up view
-    //bxTypeData_->setMargin(5);
-    //bxPlace1_->setMargin(5);
-//    bxPlace2_->setMargin(5);
-//    bxPlace3_->setMargin(5);
     sldFromTime_->setMargin(5);
     sldToTime_->setMargin(5);
     txtFromTime_->setMargin(5);
     txtToTime_->setMargin(5);
 
-
     for(int i=0;i<row;i++){
-        elementAt(i, 0)->setContentAlignment(AlignRight);
-        elementAt(i, 1)->setContentAlignment(AlignLeft);
+        uiPlaceTime->elementAt(i, 0)->setContentAlignment(AlignRight);
+        uiPlaceTime->elementAt(i, 1)->setContentAlignment(AlignLeft);
         //elementAt(i, 2)->resize(100, WLength::Auto);
-        elementAt(i,1)->setWidth(300);
+        uiPlaceTime->elementAt(i,1)->setWidth(300);
         //elementAt(i,1)->setMargin(5);
         //elementAt(i,0)->setContentAlignment();
     }
@@ -145,48 +129,48 @@ void ChooseOcean::createUI(){
 
 void ChooseOcean::bxPlace1Changed(){
     if(bxPlace.size()<2){
-        this->insertRow(1);
-        bxPlace.push_back(new WComboBox(elementAt(1,1)));
+        uiPlaceTime->insertRow(1);
+        bxPlace.push_back(new WComboBox(uiPlaceTime->elementAt(1,1)));
         bxPlace[1]->setMargin(5);
 
     }
     bxPlace[1]->clear();
     bxPlace[1]->addItem(" ");
+
     {
         dbo::Transaction transaction(session);
         WString t = bxPlace[0]->currentText();
-
+        place1IdUser_ = session.query<WString>("select id from place").where("fullname = ?").bind(t);
+        place2IdUser_ = " ";
         PtrPlaces places1=session.find<Place>().where("fullname <> ?").bind(t);
         for(PtrPlaces::const_iterator i = places1.begin();i!=places1.end();i++){
             bxPlace[1]->addItem((*i)->fullName);
         }
-    }
 
+    }
+    setUserTime();
+    createResults();
     bxPlace[1]->changed().connect(this, &ChooseOcean::bxPlace2Changed);
-    //bxPlace[1]->clicked().connect(this, &ChooseOcean::bxPlace2Changed);
 
 }
-void ChooseOcean::bxPlace2Changed(){
-    //elementAt(bxPlace.size()+1,1)->setDisabled(false);
+void ChooseOcean::setUserTime(){
     {
         dbo::Transaction transaction(session);
         PtrExps exps1;
-        if(bxPlace[0]->currentText()=="All"){
+        if(place1IdUser_=="All"){
             exps1 = session.find<Passport>();
         }
         else{
-            if(bxPlace[1]->currentText()!=" "){
+            if(place2IdUser_!=" "){
                 exps1 = session.find<Passport>().where("place_id = ? or place_id = ?")
-                                                    .bind(bxPlace[0]->currentText())
-                                                    .bind(bxPlace[1]->currentText());
+                                                    .bind(place1IdUser_)
+                                                    .bind(place2IdUser_);
             }
             else{
                 exps1 = session.find<Passport>().where("place_id = ?")
-                                                    .bind(bxPlace[0]->currentText());
+                                                    .bind(place1IdUser_);
             }
         }
-//        if(exps_.empty())
-//            exps_ = exps1;
 
         //calculate start and finish time
         int count = 0;
@@ -215,6 +199,13 @@ void ChooseOcean::bxPlace2Changed(){
         transaction.commit();
     }
 }
+void ChooseOcean::bxPlace2Changed(){
+    dbo::Transaction transaction(session);
+    place2IdUser_ = session.query<WString>("select id from place").where("fullname = ?").bind(bxPlace[1]->currentText());
+
+    setUserTime();
+    createResults();
+}
 void ChooseOcean::typeDataChanged(){
 
 }
@@ -225,7 +216,9 @@ void ChooseOcean::sldFromChanged(){
     curr.setTime_t(begTimeSample_.toTime_t()+delta);
     begTimeUser_ = curr;
     txtFromTime_ ->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
-    lblToBegTime_->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
+    lblToBegTime_->setText(curr.toString("dd.MM.yyyy"));
+
+    createResults();
 }
 void ChooseOcean::sldToChanged(){
     std::time_t delta = endTimeSample_.toTime_t() - begTimeUser_.toTime_t();
@@ -234,5 +227,65 @@ void ChooseOcean::sldToChanged(){
     curr.setTime_t(begTimeUser_.toTime_t()+delta);
     endTimeUser_ = curr;
     txtToTime_ ->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
-    lblFromEndTime_->setText(curr.toString("dd.MM.yyyy hh:mm:ss"));
+    lblFromEndTime_->setText(curr.toString("dd.MM.yyyy"));
+
+    createResults();
+
+}
+void ChooseOcean::createResults(){
+    //for input we use Wstring place1
+    listResults_->clear();
+    WText* headNumGauge = new WText("<b>Num of Gauge</b>", listResults_->elementAt(0,1));
+    WText* headPlace    = new WText("<b>Place</b>", listResults_->elementAt(0,2));
+    WText* headFromTime = new WText("<b>Start time</b>", listResults_->elementAt(0,3));
+    WText* headToTime = new WText("<b>Finish time</b>", listResults_->elementAt(0,4));
+    WText* depth = new WText("<b>Depth, m</b>", listResults_->elementAt(0,5));
+    WText* isChecked = new WText("<b></b>", listResults_->elementAt(0,0));
+
+    //create table
+//    WTable* listResults_;
+//    std::vector<WComboBox*> lstComboboxRes_;
+//    std::vector<WString>    lstNumGauges_;
+//    std::vector<WString>    lstPlaces_;
+//    std::vector<WString>    lstFromTime_;
+//    std::vector<WString>    lstToTime_;
+//    std::vector<double>     lstDepth_;
+//    std::vector<int>        lstFilt_;
+    std::vector<WCheckBox*> lstCheckBox;
+    std::vector<int> idExps;
+    {
+        dbo::Transaction transaction(session);
+        WString t = bxPlace[0]->currentText();
+        PtrExps exps;
+        if(place1IdUser_==""){ //all places
+             exps = session.find<Passport>().where("begTime <= ? and endTime >= ?")
+                    .bind(begTimeUser_)
+                    .bind(endTimeUser_);
+        }
+        else{
+            exps = session.find<Passport>().where("place_id=? or place_id=? and begTime <= ? and endTime >= ?")
+                                                .bind(place1IdUser_)
+                                                .bind(place2IdUser_)
+                                                .bind(begTimeUser_)
+                                                .bind(endTimeUser_);
+        }
+        int row=1;
+        WLabel* label;
+        std::ostringstream strsDepth;
+        for(PtrExps::const_iterator i = exps.begin();i!=exps.end();i++){
+
+            lstCheckBox.push_back(new WCheckBox(listResults_->elementAt(row,0)));
+
+            label = new WLabel((*i)->nameGauge, listResults_->elementAt(row,1));
+            label = new WLabel((*i)->place->fullName, listResults_->elementAt(row,2));
+            label = new WLabel((*i)->begTime.toString("dd.MM.yyyy hh:mm"), listResults_->elementAt(row,3));
+            label = new WLabel((*i)->endTime.toString("dd.MM.yyyy hh:mm"), listResults_->elementAt(row,4));
+            strsDepth<<(*i)->depth;
+            label = new WLabel(strsDepth.str(), listResults_->elementAt(row,5));
+
+            strsDepth.str(""); strsDepth.clear();
+            row++;
+        }
+
+    }
 }

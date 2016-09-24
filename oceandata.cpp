@@ -13,12 +13,20 @@ OceanData::OceanData(WContainerWidget *parent):WContainerWidget(parent){
     menu_->setWidth(100);
 
 
+
     // Add menu items using the default lazy loading policy.
     textOverview_ = new WText("Here will be a map with overview of experiments ..............................................");
-    chooseOcean_ = new ChooseOcean();
+    //chooseOcean_ = new ChooseOcean(contentsMenu);
+    WContainerWidget* wtCont = new WContainerWidget();
+    menu_->addItem("Overview data",textOverview_);
+    menu_->addItem("Export data", wtCont);
+    menu_->itemSelected().connect(std::bind([=] (Wt::WMenuItem *item) {
+        wtCont->clear();
+        if(item->text()=="Export data"){
+            chooseOcean_ = new ChooseOcean(wtCont);
+        }
+    }, std::placeholders::_1));
 
-    menu_->addItem("Export data", chooseOcean_);
-    menu_->addItem("Overview data", textOverview_);
 
 
     WText* title = new WText("<h3>In-situ wave measurements from Sakhakin</h3>");
