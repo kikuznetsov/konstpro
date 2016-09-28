@@ -4,40 +4,41 @@
 #include <Wt/WPushButton>
 #include <Wt/WHBoxLayout>
 #include <Wt/WCheckBox>
+#include <Wt/WPushButton>
 #include <iostream>
 #include <sstream>
 
-ChooseOcean::ChooseOcean(WContainerWidget *parent)
-  : WContainerWidget(parent),
-    sqlCon_("test.db") //create connection
+ChooseOcean::ChooseOcean(const dbo::Session& sessionKey, WContainerWidget *parent )
+  : WContainerWidget(parent)
 {
-    //set up connection
-
-    session.setConnection(sqlCon_);
-
-    //associate classes and tables
-    session.mapClass<Passport>("passport");
-    session.mapClass<Rec>("exp");
-    session.mapClass<Place>("place");
+    session = sessionKey;
+    //create UI for user-defined place1,place2, begTime, endTime
+    place1IdUser_ = "All";
+    place2IdUser_ = " ";
+    begTimeUser_ = WDateTime::fromString("01/01/1987","dd/MM/yyyy");
+    endTimeUser_ = WDateTime::currentDateTime();
+    //std::vector<Passport> passportUser_;
     createUI(parent);
 
+    //create list of results
     listResults_=new WTable(parent);
     listResults_->addStyleClass("table-bordered");
     listResults_->addStyleClass("table-condensed");
     listResults_->addStyleClass("table-striped");
     listResults_->addStyleClass("table-hover");
-    parent->setContentAlignment(AlignLeft);
 
 }
+
 void ChooseOcean::createUI(WContainerWidget* parent){
     uiPlaceTime = new WTable(parent);
     WLabel *label;
     int row = 0;
 
-//  Place
+    //Place
     bxPlace.push_back(new WComboBox(uiPlaceTime->elementAt(row, 1)));
-    bxPlace[0]->addItem("All");
 
+    //add items to comboBox bxPlace
+    bxPlace[0]->addItem("All");
     {
         dbo::Transaction transaction(session);
         PtrPlaces places=session.find<Place>();
@@ -233,24 +234,17 @@ void ChooseOcean::sldToChanged(){
 
 }
 void ChooseOcean::createResults(){
-    //for input we use Wstring place1
+    //for input we use  place1
     listResults_->clear();
+    WText* isChecked = new WText("<b></b>", listResults_->elementAt(0,0));
     WText* headNumGauge = new WText("<b>Num of Gauge</b>", listResults_->elementAt(0,1));
     WText* headPlace    = new WText("<b>Place</b>", listResults_->elementAt(0,2));
     WText* headFromTime = new WText("<b>Start time</b>", listResults_->elementAt(0,3));
     WText* headToTime = new WText("<b>Finish time</b>", listResults_->elementAt(0,4));
     WText* depth = new WText("<b>Depth, m</b>", listResults_->elementAt(0,5));
-    WText* isChecked = new WText("<b></b>", listResults_->elementAt(0,0));
+    WText* typeData = new WText("<b>Type of data</b>", listResults_->elementAt(0,6));
 
-    //create table
-//    WTable* listResults_;
-//    std::vector<WComboBox*> lstComboboxRes_;
-//    std::vector<WString>    lstNumGauges_;
-//    std::vector<WString>    lstPlaces_;
-//    std::vector<WString>    lstFromTime_;
-//    std::vector<WString>    lstToTime_;
-//    std::vector<double>     lstDepth_;
-//    std::vector<int>        lstFilt_;
+
     std::vector<WCheckBox*> lstCheckBox;
     std::vector<int> idExps;
     {
@@ -288,4 +282,19 @@ void ChooseOcean::createResults(){
         }
 
     }
+}
+WString ChooseOcean::getPlace1(){
+    return this->place1IdUser_;
+}
+
+WString ChooseOcean::getPlace2(){
+    return this->place2IdUser_;
+}
+
+WDateTime ChooseOcean::getBegTime(){
+    return this->begTimeUser_;
+}
+
+WDateTime ChooseOcean::getEndTime(){
+    return this->endTimeUser_;
 }

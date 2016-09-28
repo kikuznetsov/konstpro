@@ -4,7 +4,8 @@
 #include <Wt/WContainerWidget>
 #include <Wt/WMenu>
 #include <Wt/WText>
-#include "chooseocean.h"
+#include "plotdata.h"
+#include "mapocean.h"
 
 using namespace Wt;
 
@@ -15,7 +16,10 @@ private:
 
     WMenu* menu_;
     WText* textOverview_;
-    ChooseOcean* chooseOcean_;
+
+    Plotdata* plotdata_;
+    MapOcean* mapOcean_;
+
 
 };
 #endif // OCEANDATA_H

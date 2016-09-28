@@ -20,14 +20,18 @@ typedef dbo::collection<dbo::ptr<Place>>    PtrPlaces;
 class ChooseOcean:public WContainerWidget{
 public:
 
-    ChooseOcean(WContainerWidget* parent=0);
+    ChooseOcean(const dbo::Session& sessionKey, WContainerWidget* parent=0);
+    //~ChooseOcean();
+
+    WString getPlace1();
+    WString getPlace2();
+
+    WDateTime getBegTime();
+    WDateTime getEndTime();
 
 private:
 
-    //connection to database
-    dbo::backend::Sqlite3 sqlCon_;
     dbo::Session session;
-
 
     //UI: form for specify PlaceId ans Time
     WTable* uiPlaceTime;
@@ -67,7 +71,6 @@ private:
     WDateTime endTimeUser_;
     //std::vector<Passport> passportUser_;
     //results.............
-
 
 
     void createUI(WContainerWidget* parent);
