@@ -19,10 +19,10 @@ ChooseOcean::ChooseOcean(dbo::SqlConnectionPool& db, WContainerWidget *parent )
     begTimeUser_ = WDateTime::fromString("01/01/1987","dd/MM/yyyy");
     endTimeUser_ = WDateTime::currentDateTime();
     //std::vector<Passport> passportUser_;
-    createUI(parent);
+    createUI(this);
 
     //create list of results
-    listResults_=new WTable(parent);
+    listResults_=new WTable(this);
     listResults_->addStyleClass("table-bordered");
     listResults_->addStyleClass("table-condensed");
     listResults_->addStyleClass("table-striped");
@@ -239,9 +239,9 @@ void ChooseOcean::sldToChanged(){
 void ChooseOcean::createResults(){
     //for input we use  place1
     listResults_->clear();
-    for(vector<WCheckBox *>::iterator it = lstCheckBox.begin(); it != lstCheckBox.end(); ++it) {
-      delete *it;
-    }
+//    for(vector<WCheckBox *>::iterator it = lstCheckBox.begin(); it != lstCheckBox.end(); ++it) {
+//      delete *it;
+//    }
     lstCheckBox.clear(); //clear vector of checkBoxs
 
     WText* isChecked = new WText("<b></b>", listResults_->elementAt(0,0));
@@ -278,22 +278,11 @@ void ChooseOcean::createResults(){
         std::ostringstream strsDepth;
         for(PtrExps::const_iterator i = exps.begin();i!=exps.end();i++){
 
+            WCheckBox* tmpCheckBox = new WCheckBox(listResults_->elementAt(row,0));
+            tmpCheckBox->changed().connect(this,&ChooseOcean::checkBoxChanged);
+            lstCheckBox.push_back(tmpCheckBox);
 
-//            WCheckBox* tmp = new WCheckBox(listResults_->elementAt(row,0));
-//            tmp->changed().connect([=]{
-//                    idExpsUser_.clear();
-//                    int i = 0;
-//                    for(vector<WCheckBox*>::const_iterator chBx = lstCheckBox.begin(); chBx!=lstCheckBox.end(); chBx++){
-//                        if((*chBx)->isTristate()){
-//                            idExpsUser_.push_back(idExps_[i]);
-//                        }
-//                        i++;
-//                    }
-//            });
-            lstCheckBox.push_back(new WCheckBox(listResults_->elementAt(row,0)));
-            //lstCheckBox.push_back(tmp);
             idExps_.push_back((*i).id());
-
 
             label = new WLabel((*i)->nameGauge, listResults_->elementAt(row,1));
             label = new WLabel((*i)->place->fullName, listResults_->elementAt(row,2));
@@ -312,37 +301,14 @@ void ChooseOcean::checkBoxChanged(){
     idExpsUser_.clear();
     int i = 0;
     for(vector<WCheckBox*>::const_iterator chBx = lstCheckBox.begin(); chBx!=lstCheckBox.end(); chBx++){
-        if((*chBx)->isTristate()){
+        if((*chBx)->isChecked()){
             idExpsUser_.push_back(idExps_[i]);
         }
         i++;
     }
+    return;
 }
 
-ChooseOcean::~ChooseOcean(){
-    delete uiPlaceTime;
-
-    for(vector<WComboBox *>::iterator it = bxPlace.begin(); it != bxPlace.end(); ++it) {
-      delete (*it);
-    }
-    delete txtFromTime_;
-    delete txtToTime_;
-
-    delete sldFromTime_;
-    delete sldToTime_;
-
-    delete lblFromBegTime_;
-    delete lblFromEndTime_;
-
-    delete lblToBegTime_;
-    delete lblToEndTime_;
-
-    delete listResults_;
-
-    for(vector<WCheckBox *>::iterator it = lstCheckBox.begin(); it != lstCheckBox.end(); ++it) {
-      delete (*it);
-    }
-}
 //public functions:
 
 WDateTime ChooseOcean::getBegTime() const {

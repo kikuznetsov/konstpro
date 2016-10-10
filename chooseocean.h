@@ -20,7 +20,6 @@ class ChooseOcean:public WContainerWidget{
 public:
 
     ChooseOcean(dbo::SqlConnectionPool& db, WContainerWidget* parent=0);
-    ~ChooseOcean();
 
     std::vector<int> getExpId() const;
     WDateTime getBegTime() const;

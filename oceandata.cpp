@@ -36,12 +36,9 @@ OceanData::OceanData(WContainerWidget *parent):WContainerWidget(parent){
     menu_->addItem("Map", wtContMap);
     menu_->addItem("Export data", wtContPlot);
 //    menu_->itemSelected().connect(std::bind([=] (Wt::WMenuItem *item) {
-//        wtCont->clear();
+//        wtContPlot->clear();
 //        if(item->text()=="Export data"){
-//           plotdata_  = new Plotdata(wtCont);
-//        }
-//        else if(item->text()=="Map"){
-//           mapOcean_  = new MapOcean(wtCont);
+//           plotdata_  = new Plotdata(*db_, wtContPlot);
 //        }
 //    }, std::placeholders::_1));
 

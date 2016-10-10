@@ -9,6 +9,7 @@
 class Plotdata:public Wt::WContainerWidget{
 public:
     Plotdata(dbo::SqlConnectionPool& sqlConn, Wt::WContainerWidget* parent=0);
+
 private:
 
     OceanSession session_;

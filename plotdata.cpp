@@ -14,6 +14,7 @@ Plotdata::Plotdata(dbo::SqlConnectionPool& sqlConn, Wt::WContainerWidget *parent
     exportButton->setStyleClass("btn-success");
     exportButton->clicked().connect(this, &Plotdata::exportFunc);
 }
+
 void Plotdata::plotFunc(){
 
 }
