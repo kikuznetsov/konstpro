@@ -1,17 +1,10 @@
 #include "plotdata.h"
 
-Plotdata::Plotdata(Wt::WContainerWidget *parent):
+Plotdata::Plotdata(dbo::SqlConnectionPool& sqlConn, Wt::WContainerWidget *parent):
     Wt::WContainerWidget(parent),
-    sqlCon_("test.db") //create connection
+    session_(sqlConn)   //setup connection
 {
-    //set up connection
-    session.setConnection(sqlCon_);
-    //associate classes and tables
-    session.mapClass<Passport>("passport");
-    session.mapClass<Rec>("exp");
-    session.mapClass<Place>("place");
-
-    chooseData = new ChooseOcean(session, parent);
+    chooseData = new ChooseOcean(sqlConn, parent);
 
     plotButton = new Wt::WPushButton("Plot data", parent);
     plotButton->setStyleClass("btn-primary");

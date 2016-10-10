@@ -44,8 +44,8 @@ Site::Site(const WEnvironment& env)
     leftMenuNav->addItem("CV", new CvPage(bodyContainer));
     leftMenuNav->addItem("Publications", new Wt::WText("Under construction.."));
     leftMenuNav->addItem("Ocean data", new OceanData(bodyContainer));
+    leftMenuNav->addItem("Ocean data 11", new OceanData(bodyContainer));
     leftMenuNav->addItem("Contacts", new Content("header.xhtml"));
 
     bodyContainer->addWidget(contentsStackBody);
-
 }

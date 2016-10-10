@@ -9,8 +9,7 @@
 #include <Wt/WComboBox>
 #include <vector>
 #include <string>
-//#include <Wt/Dbo/SqlConnection>
-#include "structdb.h"
+#include "oceansession.h"
 
 using namespace Wt;
 
@@ -20,18 +19,16 @@ typedef dbo::collection<dbo::ptr<Place>>    PtrPlaces;
 class ChooseOcean:public WContainerWidget{
 public:
 
-    ChooseOcean(const dbo::Session& sessionKey, WContainerWidget* parent=0);
-    //~ChooseOcean();
+    ChooseOcean(dbo::SqlConnectionPool& db, WContainerWidget* parent=0);
+    ~ChooseOcean();
 
-    WString getPlace1();
-    WString getPlace2();
-
-    WDateTime getBegTime();
-    WDateTime getEndTime();
+    std::vector<int> getExpId() const;
+    WDateTime getBegTime() const;
+    WDateTime getEndTime() const;
 
 private:
 
-    dbo::Session session;
+    OceanSession session;
 
     //UI: form for specify PlaceId ans Time
     WTable* uiPlaceTime;
@@ -51,7 +48,8 @@ private:
 
     //UI: form for specify expId
     WTable* listResults_;
-    std::vector<WComboBox*> lstComboboxRes_;
+    std::vector<WCheckBox*> lstCheckBox;
+
     std::vector<WString>    lstNumGauges_;
     std::vector<WString>    lstPlaces_;
     std::vector<WString>    lstFromTime_;
@@ -59,18 +57,18 @@ private:
     std::vector<double>     lstDepth_;
     std::vector<int>        lstFilt_;
 
-    //WPushButton* btnGetData_;
+    //working variables
+    WString place1IdUser_;
+    WString place2IdUser_;
 
     WDateTime begTimeSample_; //time which comes from database
     WDateTime endTimeSample_;
+    std::vector<int> idExps_;
 
     //result of user actions
-    WString place1IdUser_;
-    WString place2IdUser_;
     WDateTime begTimeUser_; //time whitch was defined by user
     WDateTime endTimeUser_;
-    //std::vector<Passport> passportUser_;
-    //results.............
+    std::vector<int> idExpsUser_;
 
 
     void createUI(WContainerWidget* parent);
@@ -85,6 +83,7 @@ private:
     void createResults();
     void setUserTime();
 
+    void checkBoxChanged();
 };
 
 

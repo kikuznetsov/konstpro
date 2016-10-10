@@ -3,11 +3,15 @@
 #include <Wt/WStackedWidget>
 #include "oceandata.h"
 
+#include "oceansession.h"
+
 OceanData::OceanData(WContainerWidget *parent):WContainerWidget(parent){
 
-    // Create a stack where the contents will be located.
 
-    Wt::WStackedWidget *contentsMenu = new Wt::WStackedWidget();
+    //db connection created
+    db_ = OceanSession::createConnectionPool("test.db");
+
+    Wt::WStackedWidget *contentsMenu = new Wt::WStackedWidget();// Create a stack where the contents will be located.
 
     //menu_ = new Wt::WMenu(contentsMenu, Wt::Vertical,parent);
     menu_ = new Wt::WMenu(contentsMenu, Wt::Vertical,parent);
@@ -27,7 +31,7 @@ OceanData::OceanData(WContainerWidget *parent):WContainerWidget(parent){
     WContainerWidget* wtContMap = new WContainerWidget(parent);
     mapOcean_  = new MapOcean(wtContMap);
     WContainerWidget* wtContPlot = new WContainerWidget(parent);
-    plotdata_  = new Plotdata(wtContPlot);
+    plotdata_  = new Plotdata(*db_, wtContPlot);
     menu_->addItem("About measurements", new WText("This data was collected by group of scientist..."));
     menu_->addItem("Map", wtContMap);
     menu_->addItem("Export data", wtContPlot);

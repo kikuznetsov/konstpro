@@ -6,6 +6,7 @@
 #include <Wt/WText>
 #include "plotdata.h"
 #include "mapocean.h"
+#include "oceansession.h"
 
 using namespace Wt;
 
@@ -17,6 +18,7 @@ private:
     WMenu* menu_;
     WText* textOverview_;
 
+    dbo::SqlConnectionPool* db_; //pool of all connections to db
     Plotdata* plotdata_;
     MapOcean* mapOcean_;
 

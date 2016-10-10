@@ -3,19 +3,19 @@
 
 #include <Wt/WContainerWidget>
 #include <Wt/WPushButton>
+#include "oceansession.h"
 #include "chooseocean.h"
 
 class Plotdata:public Wt::WContainerWidget{
 public:
-    Plotdata(Wt::WContainerWidget* parent=0);
+    Plotdata(dbo::SqlConnectionPool& sqlConn, Wt::WContainerWidget* parent=0);
 private:
-    //connection to database
-    dbo::backend::Sqlite3 sqlCon_;
-    dbo::Session session;
+
+    OceanSession session_;
 
     ChooseOcean* chooseData;
-    WPushButton* plotButton;
-    WPushButton* exportButton;
+    Wt::WPushButton* plotButton;
+    Wt::WPushButton* exportButton;
 
     void plotFunc();
     void exportFunc();

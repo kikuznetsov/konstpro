@@ -8,10 +8,11 @@
 #include <iostream>
 #include <sstream>
 
-ChooseOcean::ChooseOcean(const dbo::Session& sessionKey, WContainerWidget *parent )
-  : WContainerWidget(parent)
+ChooseOcean::ChooseOcean(dbo::SqlConnectionPool& db, WContainerWidget *parent )
+  : WContainerWidget(parent),
+    session(db) //setup connection
 {
-    session = sessionKey;
+//    session = sessionKey;
     //create UI for user-defined place1,place2, begTime, endTime
     place1IdUser_ = "All";
     place2IdUser_ = " ";
@@ -26,6 +27,8 @@ ChooseOcean::ChooseOcean(const dbo::Session& sessionKey, WContainerWidget *paren
     listResults_->addStyleClass("table-condensed");
     listResults_->addStyleClass("table-striped");
     listResults_->addStyleClass("table-hover");
+
+    //lstCheckBox.push_back(new WCheckBox());
 
 }
 
@@ -236,6 +239,11 @@ void ChooseOcean::sldToChanged(){
 void ChooseOcean::createResults(){
     //for input we use  place1
     listResults_->clear();
+    for(vector<WCheckBox *>::iterator it = lstCheckBox.begin(); it != lstCheckBox.end(); ++it) {
+      delete *it;
+    }
+    lstCheckBox.clear(); //clear vector of checkBoxs
+
     WText* isChecked = new WText("<b></b>", listResults_->elementAt(0,0));
     WText* headNumGauge = new WText("<b>Num of Gauge</b>", listResults_->elementAt(0,1));
     WText* headPlace    = new WText("<b>Place</b>", listResults_->elementAt(0,2));
@@ -244,9 +252,11 @@ void ChooseOcean::createResults(){
     WText* depth = new WText("<b>Depth, m</b>", listResults_->elementAt(0,5));
     WText* typeData = new WText("<b>Type of data</b>", listResults_->elementAt(0,6));
 
+    //std::vector<WCheckBox*> lstCheckBox;
 
-    std::vector<WCheckBox*> lstCheckBox;
-    std::vector<int> idExps;
+    idExps_.clear();    //clear vector of idExps
+    idExpsUser_.clear();    //clear vector of idExps
+
     {
         dbo::Transaction transaction(session);
         WString t = bxPlace[0]->currentText();
@@ -268,7 +278,22 @@ void ChooseOcean::createResults(){
         std::ostringstream strsDepth;
         for(PtrExps::const_iterator i = exps.begin();i!=exps.end();i++){
 
+
+//            WCheckBox* tmp = new WCheckBox(listResults_->elementAt(row,0));
+//            tmp->changed().connect([=]{
+//                    idExpsUser_.clear();
+//                    int i = 0;
+//                    for(vector<WCheckBox*>::const_iterator chBx = lstCheckBox.begin(); chBx!=lstCheckBox.end(); chBx++){
+//                        if((*chBx)->isTristate()){
+//                            idExpsUser_.push_back(idExps_[i]);
+//                        }
+//                        i++;
+//                    }
+//            });
             lstCheckBox.push_back(new WCheckBox(listResults_->elementAt(row,0)));
+            //lstCheckBox.push_back(tmp);
+            idExps_.push_back((*i).id());
+
 
             label = new WLabel((*i)->nameGauge, listResults_->elementAt(row,1));
             label = new WLabel((*i)->place->fullName, listResults_->elementAt(row,2));
@@ -283,18 +308,47 @@ void ChooseOcean::createResults(){
 
     }
 }
-WString ChooseOcean::getPlace1(){
-    return this->place1IdUser_;
+void ChooseOcean::checkBoxChanged(){
+    idExpsUser_.clear();
+    int i = 0;
+    for(vector<WCheckBox*>::const_iterator chBx = lstCheckBox.begin(); chBx!=lstCheckBox.end(); chBx++){
+        if((*chBx)->isTristate()){
+            idExpsUser_.push_back(idExps_[i]);
+        }
+        i++;
+    }
 }
 
-WString ChooseOcean::getPlace2(){
-    return this->place2IdUser_;
-}
+ChooseOcean::~ChooseOcean(){
+    delete uiPlaceTime;
 
-WDateTime ChooseOcean::getBegTime(){
+    for(vector<WComboBox *>::iterator it = bxPlace.begin(); it != bxPlace.end(); ++it) {
+      delete (*it);
+    }
+    delete txtFromTime_;
+    delete txtToTime_;
+
+    delete sldFromTime_;
+    delete sldToTime_;
+
+    delete lblFromBegTime_;
+    delete lblFromEndTime_;
+
+    delete lblToBegTime_;
+    delete lblToEndTime_;
+
+    delete listResults_;
+
+    for(vector<WCheckBox *>::iterator it = lstCheckBox.begin(); it != lstCheckBox.end(); ++it) {
+      delete (*it);
+    }
+}
+//public functions:
+
+WDateTime ChooseOcean::getBegTime() const {
     return this->begTimeUser_;
 }
 
-WDateTime ChooseOcean::getEndTime(){
+WDateTime ChooseOcean::getEndTime() const {
     return this->endTimeUser_;
 }
