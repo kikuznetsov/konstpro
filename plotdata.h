@@ -3,6 +3,7 @@
 
 #include <Wt/WContainerWidget>
 #include <Wt/WPushButton>
+#include <Wt/WDialog>
 #include "oceansession.h"
 #include "chooseocean.h"
 
@@ -14,9 +15,14 @@ private:
 
     OceanSession session_;
 
+    Wt::Chart::WCartesianChart *chart_;
+    Wt::WDialog *dialog;
+
     ChooseOcean* chooseData;
     Wt::WPushButton* plotButton;
     Wt::WPushButton* exportButton;
+
+
 
     void plotFunc();
     void exportFunc();

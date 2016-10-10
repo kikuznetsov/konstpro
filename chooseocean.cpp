@@ -291,6 +291,16 @@ void ChooseOcean::createResults(){
             strsDepth<<(*i)->depth;
             label = new WLabel(strsDepth.str(), listResults_->elementAt(row,5));
 
+
+            WComboBox* tmpComboBox = new WComboBox(listResults_->elementAt(row,6));
+            tmpComboBox->addItem("Surface (reconstr), m");
+            tmpComboBox->addItem("Water pressure, m");
+            tmpComboBox->addItem("Pressure (origin), mmHg");
+            tmpComboBox->addItem("Temprature, C");
+
+            lstTypeData.push_back(tmpComboBox);
+
+
             strsDepth.str(""); strsDepth.clear();
             row++;
         }

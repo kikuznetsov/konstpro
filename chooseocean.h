@@ -48,6 +48,7 @@ private:
     //UI: form for specify expId
     WTable* listResults_;
     std::vector<WCheckBox*> lstCheckBox;
+    std::vector<WComboBox*> lstTypeData;
 
     std::vector<WString>    lstNumGauges_;
     std::vector<WString>    lstPlaces_;
