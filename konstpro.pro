@@ -57,6 +57,7 @@ HEADERS += \
 DISTFILES += \
     briefCv.xhtml \
     homePage.xhtml \
-    header.xhtml
+    header.xhtml \
+    Makefile
 
 
