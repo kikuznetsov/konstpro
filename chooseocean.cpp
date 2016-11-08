@@ -257,6 +257,7 @@ void ChooseOcean::createResults(){
     idExps_.clear();    //clear vector of idExps
     idExpsUser_.clear();    //clear vector of idExps
 
+    resUser_.clear();    //clear vector of idExps
     {
         dbo::Transaction transaction(session);
         WString t = bxPlace[0]->currentText();
@@ -309,10 +310,12 @@ void ChooseOcean::createResults(){
 }
 void ChooseOcean::checkBoxChanged(){
     idExpsUser_.clear();
+    resUser_.clear();
     int i = 0;
     for(vector<WCheckBox*>::const_iterator chBx = lstCheckBox.begin(); chBx!=lstCheckBox.end(); chBx++){
         if((*chBx)->isChecked()){
             idExpsUser_.push_back(idExps_[i]);
+            resUser_.push_back(Result(lstTypeData[i]->currentIndex(),idExps_[i], begTimeUser_, endTimeUser_));
         }
         i++;
     }
@@ -327,4 +330,8 @@ WDateTime ChooseOcean::getBegTime() const {
 
 WDateTime ChooseOcean::getEndTime() const {
     return this->endTimeUser_;
+}
+
+std::vector<Result> ChooseOcean::getResult() const {
+    return this->resUser_;
 }

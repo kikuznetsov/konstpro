@@ -10,11 +10,13 @@
 #include <vector>
 #include <string>
 #include "oceansession.h"
+#include "resultchoose.h"
 
 using namespace Wt;
 
 typedef dbo::collection<dbo::ptr<Passport>> PtrExps;
 typedef dbo::collection<dbo::ptr<Place>>    PtrPlaces;
+
 
 class ChooseOcean:public WContainerWidget{
 public:
@@ -24,6 +26,7 @@ public:
     std::vector<int> getExpId() const;
     WDateTime getBegTime() const;
     WDateTime getEndTime() const;
+    std::vector<Result> getResult() const;
 
 private:
 
@@ -68,7 +71,9 @@ private:
     //result of user actions
     WDateTime begTimeUser_; //time whitch was defined by user
     WDateTime endTimeUser_;
-    std::vector<int> idExpsUser_;
+    std::vector<int> idExpsUser_; //??
+    std::vector<Result> resUser_;
+
 
 
     void createUI(WContainerWidget* parent);
@@ -84,6 +89,7 @@ private:
     void setUserTime();
 
     void checkBoxChanged();
+
 };
 
 

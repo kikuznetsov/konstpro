@@ -155,6 +155,44 @@ public:
     }
 };
 
+//Filtered Rec
+class FiltRec{
+public:
+
+    Wt::WDateTime time;
+    double press;
+
+    dbo::ptr<Passport> exp; //relations with separate experiment
+
+    //Constructors
+    FiltRec(){
+        time = Wt::WDateTime();
+        press = 0;
+        //Passport* exp1 = new Passport();
+        //exp = dbo::ptr<Passport>(NULL);
+    }
+    FiltRec(std::string& time1, double press1){
+        time = Wt::WDateTime::fromString(time1,"dd.MM.yy HH:mm:ss");
+        press = press1;
+    }
+    FiltRec(Wt::WDateTime time1, double pr1){
+        time = time1;
+        press = pr1;
+    }
+    ~FiltRec(){
+        //std::cout<<"destructor";
+    }
+    //Relations
+    template<class Action>
+    void persist(Action& a)
+    {
+        Wt::Dbo::field(a, time,     "time");
+        Wt::Dbo::field(a, press,    "press");
+
+        dbo::belongsTo(a, exp,      "exp");
+    }
+};
+
 namespace Wt {
     namespace Dbo {
     //Settings for Rec

@@ -38,6 +38,7 @@ QMAKE_CXXFLAGS += -std=c++0x
 LIBS += -L/usr/local/lib -lwthttp -lwt -lboost_regex -lboost_signals
 LIBS += -lboost_system -lboost_thread -lboost_filesystem -lboost_date_time
 LIBS += -lwtdbo -lwtdbosqlite3
+LIBS += -lzip #for compression files
 
 HEADERS += \
     site.h \
@@ -50,7 +51,8 @@ HEADERS += \
     structdb.h \
     mapocean.h \
     plotdata.h \
-    oceansession.h
+    oceansession.h \
+    resultchoose.h
 
 DISTFILES += \
     briefCv.xhtml \
